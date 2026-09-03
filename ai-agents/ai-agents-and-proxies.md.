@@ -1,0 +1,1117 @@
+# AI Agents and Proxies
+
+AI browser agents operate inside real browser environments.
+
+They navigate websites, read pages, click elements, submit forms, collect information, and perform multi-step workflows.
+
+But browser automation has two major environments to manage:
+
+1. **The browser environment**
+2. **The network environment**
+
+A browser profile controls much of the first.
+
+A proxy is one of the primary components of the second.
+
+Understanding how AI agents, browser profiles, fingerprints, and proxies work together is important when building reliable browser automation infrastructure.
+
+---
+
+# What Is a Proxy?
+
+A proxy is an intermediary between a client and the destination server.
+
+Instead of:
+
+```text
+Browser
+   ↓
+Website
+```
+
+traffic can be routed through:
+
+```text
+Browser
+   ↓
+Proxy
+   ↓
+Website
+```
+
+The destination generally sees the proxy's network address rather than the browser's direct network address.
+
+However, a proxy does **not** automatically change the browser fingerprint.
+
+This distinction is fundamental.
+
+---
+
+# AI Agent + Proxy Architecture
+
+A simple AI browser architecture might look like:
+
+```text
+AI Model
+    ↓
+AI Agent
+    ↓
+Browser Automation
+    ↓
+Browser Profile
+    ↓
+Proxy
+    ↓
+Website
+```
+
+Each layer has a different responsibility.
+
+| Layer           | Main Responsibility           |
+| --------------- | ----------------------------- |
+| AI Model        | Reasoning                     |
+| AI Agent        | Task planning                 |
+| Automation      | Browser control               |
+| Browser Profile | Session/environment isolation |
+| Fingerprint     | Browser characteristics       |
+| Proxy           | Network routing               |
+| Website         | Destination                   |
+
+A proxy should therefore be treated as part of the network layer rather than the browser identity layer.
+
+---
+
+# Why Would an AI Browser Agent Use a Proxy?
+
+There are many legitimate reasons to use proxies with browser automation.
+
+## Geographic Testing
+
+A development team may need to test how a website behaves from different regions.
+
+For example:
+
+```text
+Agent
+ ├── US Network → Website
+ ├── UK Network → Website
+ └── Germany Network → Website
+```
+
+This can help test:
+
+* Regional content
+* Localization
+* Pricing displays
+* Search results
+* Geographic restrictions
+* Advertising experiences
+
+---
+
+## Web Research
+
+Research systems may use controlled network environments when collecting information from websites.
+
+For example:
+
+```text
+Research Agent
+      ↓
+Browser Profile
+      ↓
+Research Proxy
+      ↓
+Public Website
+```
+
+The proxy becomes part of the research infrastructure.
+
+---
+
+## Quality Assurance
+
+QA teams can test applications under different network conditions.
+
+An agent might run:
+
+```text
+Test A → Network A
+Test B → Network B
+Test C → Network C
+```
+
+This can help identify geographic or network-dependent problems.
+
+---
+
+## E-Commerce Testing
+
+E-commerce teams may need to test:
+
+* Regional storefronts
+* Localized pages
+* Currency presentation
+* Shipping availability
+* Search behavior
+* Checkout experiences
+
+A proxy can provide the network location required for the test environment.
+
+---
+
+# Proxy Types
+
+Different proxy types have different characteristics.
+
+Common categories include:
+
+* HTTP proxies
+* HTTPS proxies
+* SOCKS5 proxies
+* Residential proxies
+* Mobile proxies
+* Datacenter proxies
+
+The right choice depends on the application.
+
+See the repository's proxy documentation:
+
+* [What Is a Proxy?](../proxy/what-is-a-proxy.md)
+* [HTTP Proxy](../proxy/http-proxy.md)
+* [SOCKS5 Proxy](../proxy/socks5-proxy.md)
+* [Residential Proxy](../proxy/residential-proxy.md)
+* [Mobile Proxy](../proxy/mobile-proxy.md)
+
+---
+
+# HTTP Proxies
+
+HTTP proxies are commonly used for web traffic.
+
+A simplified architecture is:
+
+```text
+Browser
+   ↓
+HTTP Proxy
+   ↓
+Website
+```
+
+They can be useful for applications where HTTP/HTTPS traffic is sufficient.
+
+For browser automation, compatibility depends on the browser and automation environment.
+
+---
+
+# SOCKS5 Proxies
+
+SOCKS5 operates at a lower level than application-specific HTTP proxying.
+
+Conceptually:
+
+```text
+Browser
+   ↓
+SOCKS5 Proxy
+   ↓
+Destination
+```
+
+SOCKS5 can be useful when an application needs broader network routing capabilities.
+
+See:
+
+[SOCKS5 Proxy](../proxy/socks5-proxy.md)
+
+---
+
+# Residential Proxies
+
+Residential proxies route traffic through IP addresses associated with residential networks.
+
+They are commonly used for:
+
+* Geographic testing
+* Market research
+* Localization
+* Web testing
+
+Residential does not automatically mean "undetectable."
+
+Website risk systems can evaluate many signals beyond IP type.
+
+See:
+
+[Residential Proxy](../proxy/residential-proxy.md)
+
+---
+
+# Mobile Proxies
+
+Mobile proxies use IP addresses associated with mobile networks.
+
+They can be useful when testing mobile-network scenarios or regional experiences.
+
+Again, proxy type is only one component of the overall browser environment.
+
+See:
+
+[Mobile Proxy](../proxy/mobile-proxy.md)
+
+---
+
+# Proxy vs Browser Fingerprint
+
+This is one of the most important concepts in browser infrastructure.
+
+A proxy primarily changes the **network path**.
+
+A browser fingerprint describes the **browser environment**.
+
+For example:
+
+```text
+Proxy
+└── Network address
+
+Fingerprint
+├── Browser
+├── Operating system
+├── Screen
+├── Canvas
+├── WebGL
+├── Audio
+├── Fonts
+└── Other browser signals
+```
+
+Changing one does not automatically change the other.
+
+---
+
+# Why IP Address Alone Is Not Enough
+
+A website can potentially observe more than the network address.
+
+A simplified example:
+
+```text
+Network
+ └── IP address
+
+Browser
+ ├── User agent
+ ├── Screen
+ ├── WebGL
+ ├── Canvas
+ ├── Audio
+ ├── Fonts
+ └── JavaScript behavior
+
+Session
+ ├── Cookies
+ └── Local storage
+```
+
+These layers can interact.
+
+Therefore:
+
+> A proxy is not a replacement for browser-profile management.
+
+Likewise:
+
+> A browser fingerprint is not a replacement for appropriate network configuration.
+
+---
+
+# AI Agents Need Stable Network Configuration
+
+An AI agent may operate through a long sequence:
+
+```text
+Open
+ ↓
+Login
+ ↓
+Navigate
+ ↓
+Search
+ ↓
+Read
+ ↓
+Submit
+ ↓
+Verify
+```
+
+If the network environment changes unexpectedly during the workflow, troubleshooting becomes harder.
+
+For many legitimate workflows, stable network configuration is easier to manage.
+
+A profile can therefore be associated with a specific network configuration:
+
+```text
+Profile A
+ ├── Browser Environment A
+ └── Proxy A
+
+Profile B
+ ├── Browser Environment B
+ └── Proxy B
+```
+
+This creates a clearer relationship between browser state and network state.
+
+---
+
+# Proxy Rotation
+
+Proxy rotation means changing the proxy used by a workflow.
+
+A simplified example:
+
+```text
+Request 1 → Proxy A
+Request 2 → Proxy B
+Request 3 → Proxy C
+```
+
+Rotation can be useful for certain testing and research architectures.
+
+However, unnecessary rotation can make sessions harder to manage.
+
+For a persistent browser workflow, the question is not simply:
+
+> "How often should the proxy change?"
+
+A better question is:
+
+> "Does this workflow actually require the network identity to change?"
+
+---
+
+# Sticky Proxies
+
+A sticky proxy maintains the same proxy for a period of time.
+
+For example:
+
+```text
+Agent
+ ↓
+Proxy A
+ ↓
+Requests 1–20
+```
+
+This can be easier to manage when a workflow needs a relatively stable network environment.
+
+Sticky behavior depends on the proxy provider and configuration.
+
+---
+
+# Proxy Rotation vs Sticky Sessions
+
+| Model           | Description                        | Typical Use                  |
+| --------------- | ---------------------------------- | ---------------------------- |
+| Rotating proxy  | Address changes periodically       | Distributed research/testing |
+| Sticky proxy    | Address remains stable temporarily | Persistent workflows         |
+| Dedicated proxy | Assigned to one environment        | Controlled testing           |
+| Shared proxy    | Used by multiple users             | General routing              |
+
+There is no universally best proxy model.
+
+The correct choice depends on the application.
+
+---
+
+# Proxy and Geolocation
+
+Geolocation is another important consideration.
+
+A browser workflow may involve several location-related signals:
+
+```text
+IP Location
+      +
+Browser Time Zone
+      +
+Language
+      +
+Browser Geolocation
+      +
+Website Configuration
+```
+
+For localization testing, these values may need to be considered together.
+
+For example:
+
+```text
+Network:
+United Kingdom
+
+Time Zone:
+Europe/London
+
+Language:
+English
+
+Browser Location:
+United Kingdom
+```
+
+This creates a more coherent test environment.
+
+See:
+
+[Proxy Geolocation](../proxy/proxy-geolocation.md)
+
+---
+
+# AI Agents and Proxy Pools
+
+A larger automation system may use a pool of proxies.
+
+Conceptually:
+
+```text
+                Proxy Pool
+          ┌────────┼────────┐
+          ↓        ↓        ↓
+       Proxy A  Proxy B  Proxy C
+          ↑        ↑        ↑
+          └────────┼────────┘
+                   │
+               Agent Pool
+```
+
+A controller can assign network resources to different browser workflows.
+
+For example:
+
+```text
+Agent A → Profile A → Proxy A
+Agent B → Profile B → Proxy B
+Agent C → Profile C → Proxy C
+```
+
+This makes resource allocation easier to reason about.
+
+---
+
+# Proxy Management at Scale
+
+When the number of browser sessions increases, manually managing proxies becomes difficult.
+
+A proxy management system may track:
+
+* Proxy address
+* Port
+* Protocol
+* Geographic location
+* Authentication
+* Availability
+* Current assignment
+* Session status
+* Rotation status
+
+A simplified database could look like:
+
+```text
+Proxy ID | Location | Status | Assigned Profile
+------------------------------------------------
+P001     | US       | Active | Profile A
+P002     | UK       | Active | Profile B
+P003     | DE       | Idle   | -
+```
+
+This allows an automation controller to make better allocation decisions.
+
+---
+
+# Proxy Health
+
+A proxy should not be treated as permanently reliable.
+
+A useful proxy-management system can monitor:
+
+* Connection success
+* Response time
+* Timeouts
+* Authentication failures
+* Availability
+* Geographic consistency
+
+For example:
+
+```text
+Proxy A
+Latency: Low
+Status: Healthy
+
+Proxy B
+Latency: High
+Status: Warning
+
+Proxy C
+Connection failed
+Status: Offline
+```
+
+An AI agent should ideally receive a healthy network resource rather than blindly selecting an unavailable proxy.
+
+---
+
+# AI Agents and Proxy Failure
+
+Network failures are normal in distributed browser automation.
+
+A workflow may encounter:
+
+```text
+Agent
+ ↓
+Proxy
+ ↓
+Connection Failed
+```
+
+A robust system can respond:
+
+```text
+Detect failure
+     ↓
+Check proxy
+     ↓
+Retry connection
+     ↓
+Use approved fallback
+     ↓
+Resume task
+```
+
+The fallback policy should be determined by the application.
+
+For some workflows, changing the network environment during a session may be undesirable.
+
+For others, retrying with another network can be appropriate.
+
+---
+
+# Proxy Authentication
+
+Many proxies require authentication.
+
+Common models include:
+
+```text
+Username + Password
+```
+
+or provider-specific authentication methods.
+
+Credentials should be stored securely.
+
+Avoid placing proxy credentials directly inside source code:
+
+```text
+BAD:
+proxy = "username:password@host:port"
+```
+
+Instead, use secure configuration or environment variables where appropriate.
+
+---
+
+# Proxy Credentials and AI Agents
+
+AI agents introduce another security consideration.
+
+An AI model should not automatically have unrestricted access to proxy credentials.
+
+A safer architecture is:
+
+```text
+AI Agent
+   ↓
+Approved Tool
+   ↓
+Proxy Manager
+   ↓
+Authenticated Proxy
+```
+
+The agent requests a network resource.
+
+The infrastructure handles the credentials.
+
+This separates reasoning from sensitive infrastructure secrets.
+
+---
+
+# AI Agents, Proxies, and MCP
+
+MCP can provide a tool layer between an AI agent and browser infrastructure.
+
+A conceptual system could look like:
+
+```text
+AI Model
+    ↓
+AI Agent
+    ↓
+MCP
+    ├── Browser Tool
+    ├── Profile Tool
+    └── Network Tool
+            ↓
+        Proxy Manager
+            ↓
+          Proxy
+            ↓
+         Website
+```
+
+The AI does not necessarily need direct access to the underlying proxy credentials.
+
+Instead, tools can expose controlled operations.
+
+For example:
+
+```text
+get_available_network()
+assign_network(profile)
+check_network_status()
+release_network(profile)
+```
+
+The exact implementation depends on the automation platform.
+
+---
+
+# AI Browser Agents and Anti-Detect Browsers
+
+An anti-detect browser generally focuses on browser-profile and fingerprint management.
+
+A proxy focuses primarily on network routing.
+
+These capabilities can complement one another.
+
+```text
+AI Agent
+    ↓
+Automation Layer
+    ↓
+Anti-Detect Browser
+    ├── Profile
+    ├── Fingerprint
+    └── Session
+          ↓
+       Proxy
+          ↓
+       Website
+```
+
+The anti-detect browser manages the browser environment.
+
+The proxy manages the network path.
+
+The AI agent manages the workflow.
+
+---
+
+# A Complete AI Browser Infrastructure
+
+Putting everything together:
+
+```text
+                         AI Model
+                            │
+                            ▼
+                        AI Agent
+                            │
+                            ▼
+                    Automation / MCP
+                            │
+                            ▼
+                    Browser Controller
+                            │
+                ┌───────────┴───────────┐
+                ▼                       ▼
+         Browser Profile          Network Manager
+                │                       │
+        ┌───────┼────────┐              ▼
+        ▼       ▼        ▼           Proxy Pool
+   Cookies  Fingerprint  State           │
+                                         ▼
+                                      Internet
+                                         │
+                                         ▼
+                                      Website
+```
+
+This architecture separates the major concerns.
+
+---
+
+# Browser Profile + Proxy Mapping
+
+One common infrastructure pattern is one logical browser profile associated with one logical network configuration.
+
+For example:
+
+```text
+Profile A → Proxy A
+Profile B → Proxy B
+Profile C → Proxy C
+```
+
+This is not a universal requirement.
+
+Some applications legitimately share network infrastructure across multiple browser sessions.
+
+The appropriate architecture depends on the use case.
+
+The key principle is **clear resource ownership and predictable configuration**.
+
+---
+
+# Proxy Does Not Guarantee Anonymity
+
+A proxy can change the apparent network address, but it does not guarantee anonymity.
+
+Websites may still observe other information.
+
+Potentially relevant categories include:
+
+* Browser fingerprints
+* Cookies
+* Session behavior
+* Browser APIs
+* Request patterns
+* Network characteristics
+* Account activity
+* Site-specific risk signals
+
+Therefore:
+
+> Proxy ≠ anonymity guarantee.
+
+And:
+
+> Anti-detect browser ≠ guaranteed invisibility.
+
+These technologies are infrastructure components, not universal bypass mechanisms.
+
+---
+
+# Proxy Quality Matters
+
+Not all proxies provide the same experience.
+
+Important factors can include:
+
+### Reliability
+
+Does the connection remain available?
+
+### Latency
+
+How quickly does traffic travel through the proxy?
+
+### Geographic accuracy
+
+Does the network location match the intended region?
+
+### Reputation
+
+How has the address been used previously?
+
+### Authentication
+
+Can the proxy be accessed reliably?
+
+### Availability
+
+Can enough addresses be provided for the required workload?
+
+These factors can directly affect browser automation reliability.
+
+---
+
+# Choosing a Proxy for AI Browser Automation
+
+Consider the workflow first.
+
+### For QA
+
+Prioritize:
+
+* Predictability
+* Geographic control
+* Reliability
+
+### For localization testing
+
+Prioritize:
+
+* Geographic accuracy
+* Stable connections
+* Appropriate regional routing
+
+### For research
+
+Prioritize:
+
+* Reliability
+* Appropriate geographic coverage
+* Sufficient capacity
+
+### For long-running workflows
+
+Prioritize:
+
+* Stability
+* Session continuity
+* Low failure rates
+
+The most expensive proxy is not automatically the best proxy.
+
+---
+
+# Common Mistakes
+
+## Mistake 1: Thinking a Proxy Changes Everything
+
+A proxy changes network routing.
+
+It does not automatically modify the browser fingerprint.
+
+---
+
+## Mistake 2: Changing Proxies Without a Reason
+
+Frequent network changes can make persistent workflows harder to manage.
+
+---
+
+## Mistake 3: Ignoring Location Consistency
+
+IP location, time zone, language, and browser geolocation can be relevant together.
+
+---
+
+## Mistake 4: Hard-Coding Credentials
+
+Proxy credentials should be protected like other infrastructure secrets.
+
+---
+
+## Mistake 5: Ignoring Proxy Health
+
+A failed proxy can cause browser workflows to fail even when the browser itself is working correctly.
+
+---
+
+## Mistake 6: Giving the AI Direct Credential Access
+
+Use controlled infrastructure tools whenever possible.
+
+---
+
+## Mistake 7: Assuming Residential Means Undetectable
+
+Residential IPs are still only one part of the overall environment.
+
+---
+
+# Best Practices
+
+For AI browser systems using proxies:
+
+1. **Separate browser configuration from network configuration.**
+2. **Choose proxy types based on the actual workflow.**
+3. **Use stable network configurations when sessions require continuity.**
+4. **Monitor proxy health and latency.**
+5. **Protect proxy credentials.**
+6. **Consider geographic consistency when location matters.**
+7. **Maintain clear profile-to-network mappings where appropriate.**
+8. **Use controlled proxy-management tools at scale.**
+9. **Build retry and failure handling into the automation layer.**
+10. **Do not treat a proxy as a guarantee of anonymity or detection avoidance.**
+
+---
+
+# Where MarketerBrowser Fits
+
+MarketerBrowser can serve as the browser-profile layer in an AI browser automation architecture.
+
+A conceptual workflow is:
+
+```text
+AI Agent
+    ↓
+Automation / MCP
+    ↓
+MarketerBrowser
+    ↓
+Browser Profile
+    ├── Fingerprint
+    ├── Cookies
+    └── Session State
+    ↓
+Proxy
+    ↓
+Website
+```
+
+This allows browser-profile management and network configuration to remain separate but coordinated parts of the automation stack.
+
+The broader ecosystem can therefore be understood as:
+
+```text
+AI
+ ↓
+Automation
+ ↓
+Browser Profiles
+ ↓
+Fingerprints
+ ↓
+Proxies
+ ↓
+Web
+```
+
+---
+
+# Frequently Asked Questions
+
+## Does an AI agent need a proxy?
+
+Not always.
+
+A proxy is useful when a workflow requires controlled network routing, geographic testing, or another legitimate network-management requirement.
+
+## Does a proxy change browser fingerprints?
+
+No. A proxy primarily changes network routing. Browser fingerprinting is a separate layer.
+
+## Can one browser profile use a proxy?
+
+Yes. Browser automation environments can be configured to route traffic through a proxy when supported by the browser and automation system.
+
+## Can different profiles use different proxies?
+
+Yes. This is a common architecture for keeping browser and network configurations logically separated.
+
+## Should every browser have a unique proxy?
+
+Not necessarily.
+
+The correct configuration depends on the application's requirements. Some workflows can share network infrastructure.
+
+## What is a sticky proxy?
+
+A sticky proxy maintains the same network address for a defined period or session, depending on the provider.
+
+## Are residential proxies anonymous?
+
+No proxy should be treated as an absolute anonymity guarantee.
+
+## Can an AI agent rotate proxies?
+
+Technically, an automation system can change network resources between workflows or requests when the infrastructure supports it.
+
+Whether rotation is appropriate depends on the use case.
+
+## Does changing a proxy change cookies?
+
+No.
+
+Cookies are browser-stored data and are normally associated with the browser profile/session rather than automatically changing because a proxy changes.
+
+## Does changing a proxy change the fingerprint?
+
+No.
+
+The network and browser fingerprint are separate layers.
+
+## Can MCP manage proxies?
+
+MCP can expose network-management tools to an AI system when an appropriate MCP server or integration provides those capabilities.
+
+## What is more important: proxy or fingerprint?
+
+Neither can be considered universally more important.
+
+They solve different problems:
+
+* Fingerprint → browser environment
+* Proxy → network environment
+
+A reliable system considers both where relevant.
+
+---
+
+# Conclusion
+
+AI browser automation is not just about teaching an AI how to click buttons.
+
+A production-oriented system may need to manage:
+
+* AI reasoning
+* Browser automation
+* Browser profiles
+* Fingerprints
+* Cookies
+* Session state
+* Network routing
+* Proxies
+* Geographic configuration
+* Security
+* Monitoring
+* Error recovery
+
+A useful mental model is:
+
+```text
+AI Agent
+    ↓
+Automation
+    ↓
+Browser Profile
+    ↓
+Fingerprint + Session
+    ↓
+Proxy
+    ↓
+Website
+```
+
+The most important lesson is that **browser identity and network identity are different layers**.
+
+AI agents operate on top of these layers, while browser-profile and proxy infrastructure provide the environment in which those agents work.
+
+Understanding how the pieces fit together is the foundation for building reliable, scalable, and maintainable AI browser automation.
+
+---
+
+## Related Topics
+
+* [AI Browser Agents](ai-browser-agents.md)
+* [AI Agents and Fingerprints](ai-agents-and-fingerprints.md)
+* [AI Browser Automation](../automation/browser-automation.md)
+* [Playwright](../automation/playwright.md)
+* [Puppeteer](../automation/puppeteer.md)
+* [Selenium](../automation/selenium.md)
+* [Browser Fingerprinting](../docs/browser-fingerprinting.md)
+* [Browser Profile Isolation](../docs/browser-profile-isolation.md)
+* [Fingerprint Consistency](../docs/fingerprint-consistency.md)
+* [What Is a Proxy?](../proxy/what-is-a-proxy.md)
+* [Proxy and Browser Fingerprint](../proxy/proxy-and-browser-fingerprint.md)
+* [Proxy Geolocation](../proxy/proxy-geolocation.md)
